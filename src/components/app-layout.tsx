@@ -1,6 +1,4 @@
 import { Outlet } from 'react-router'
-import { AppHeader } from './app-header'
-import { AppFooter } from './app-footer'
 import { SidebarProvider } from '@/components/ui/sidebar'
 
 export function AppLayout() {
@@ -13,11 +11,9 @@ export function AppLayout() {
             }
         >
             <div className="min-h-screen flex flex-col w-full">
-                <AppHeader />
                 <div className="flex-1 flex">
                     <Outlet />
                 </div>
-                <AppFooter />
             </div>
         </SidebarProvider>
     )

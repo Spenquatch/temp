@@ -37,6 +37,15 @@
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
+  
+  /* Custom blue colors */
+  --color-blue-100: #F5F9FF;
+  --color-blue-300: #D6E6FF;
+  --color-gradient-blue: linear-gradient(65deg, var(--color-blue-300) -19.12%, var(--color-blue-100) 90.69%);
+  --color-gradient-blue-reverse: linear-gradient(65deg, var(--color-blue-100) -19.12%, var(--color-blue-300) 90.69%);
+  --color-gradient-blue-reverse-full: linear-gradient(245deg, var(--color-blue-300) -19.12%, var(--color-blue-100) 90.69%);
+
+  --color-muted-foreground: #62748E;
 }
 
 .dark {

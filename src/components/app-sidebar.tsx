@@ -1,7 +1,14 @@
 "use client"
 
 import * as React from "react"
-import { ArchiveX, Command, File, Inbox, Send, Trash2 } from "lucide-react"
+import { 
+  Calendar,
+  Cast, 
+  LayoutPanelLeft, 
+  ListTodo, 
+  SquareUserRound, 
+  TextSearch 
+} from "lucide-react"
 
 import { NavUser } from "@/components/nav-user"
 import { Label } from "@/components/ui/label"
@@ -16,6 +23,8 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarSeparator,
+  SidebarTrigger,
   useSidebar,
 } from "@/components/ui/sidebar"
 import { Switch } from "@/components/ui/switch"
@@ -29,33 +38,41 @@ const data = {
   },
   navMain: [
     {
-      title: "Inbox",
+      title: "Dashboard",
       url: "#",
-      icon: Inbox,
+      icon: LayoutPanelLeft,
       isActive: true,
     },
     {
-      title: "Drafts",
+      title: "Calendar",
       url: "#",
-      icon: File,
+      icon: Calendar,
+      isActive: false,
+    },
+    // Horizontal separator should be here
+    {
+      title: "Prepare",
+      url: "#",
+      icon: ListTodo,
       isActive: false,
     },
     {
-      title: "Sent",
+      title: "Active\nNotes",
       url: "#",
-      icon: Send,
+      icon: Cast,
       isActive: false,
     },
     {
-      title: "Junk",
+      title: "Review\n& Refine",
       url: "#",
-      icon: ArchiveX,
+      icon: TextSearch,
       isActive: false,
     },
+    // Horizontal separator should be here
     {
-      title: "Trash",
+      title: "Prim",
       url: "#",
-      icon: Trash2,
+      icon: SquareUserRound,
       isActive: false,
     },
   ],
@@ -111,116 +128,188 @@ const data = {
   ],
 }
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+export function AppSidebar({ className, ...props }: React.ComponentProps<typeof Sidebar>) {
   // Note: Using state to show active item
   const [activeItem, setActiveItem] = React.useState(data.navMain[0])
   const [mails, setMails] = React.useState(data.mails)
-  const { setOpen } = useSidebar()
+  const { setOpen, state } = useSidebar()
+
+  // Custom style to override the truncate behavior
+  React.useEffect(() => {
+    // Add a style to override the truncate in SidebarMenuButton
+    const style = document.createElement('style');
+    style.textContent = `
+      .nav-text-wrap > span:last-child {
+        white-space: pre-line !important;
+        overflow: visible !important;
+        text-overflow: clip !important;
+      }
+      
+      [data-active=true] .sidebar-icon,
+      [data-active=true] .sidebar-text {
+        color: #404e67 !important;
+        font-weight: 600 !important;
+      }
+    `;
+    document.head.appendChild(style);
+    
+    return () => {
+      document.head.removeChild(style);
+    };
+  }, []);
 
   return (
-    <Sidebar
-      collapsible="icon"
-      className="overflow-hidden [&>[data-sidebar=sidebar]]:flex-row"
-      {...props}
-    >
-      {/* First sidebar - icons */}
-      <Sidebar
-        collapsible="none"
-        className="!w-[calc(var(--sidebar-width-icon)_+_1px)] border-r"
-      >
-        <SidebarHeader>
-          <SidebarMenu>
-            <SidebarMenuItem>
-              <SidebarMenuButton size="lg" asChild className="md:h-8 md:p-0">
-                <a href="#">
-                  <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
-                    <Command className="size-4" />
-                  </div>
-                  <div className="grid flex-1 text-left text-sm leading-tight">
-                    <span className="truncate font-semibold">Acme Inc</span>
-                    <span className="truncate text-xs">Enterprise</span>
-                  </div>
-                </a>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-          </SidebarMenu>
-        </SidebarHeader>
-        <SidebarContent>
-          <SidebarGroup>
-            <SidebarGroupContent className="px-1.5 md:px-0">
-              <SidebarMenu>
-                {data.navMain.map((item) => (
-                  <SidebarMenuItem key={item.title}>
-                    <SidebarMenuButton
-                      tooltip={{
-                        children: item.title,
-                        hidden: false,
-                      }}
-                      onClick={() => {
-                        setActiveItem(item)
-                        const mail = data.mails.sort(() => Math.random() - 0.5)
-                        setMails(
-                          mail.slice(
-                            0,
-                            Math.max(5, Math.floor(Math.random() * 10) + 1)
-                          )
-                        )
-                        setOpen(true)
-                      }}
-                      isActive={activeItem?.title === item.title}
-                      className="px-2.5 md:px-2"
-                    >
-                      <item.icon />
-                      <span>{item.title}</span>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                ))}
-              </SidebarMenu>
-            </SidebarGroupContent>
-          </SidebarGroup>
-        </SidebarContent>
-        <SidebarFooter>
-          <NavUser user={data.user} />
-        </SidebarFooter>
-      </Sidebar>
-
-      {/* Second sidebar - email list */}
-      <Sidebar collapsible="none" className="hidden flex-1 md:flex">
-        <SidebarHeader className="gap-3.5 border-b p-4">
-          <div className="flex w-full items-center justify-between">
-            <div className="text-base font-medium text-foreground">
-              {activeItem?.title}
-            </div>
-            <Label className="flex items-center gap-2 text-sm">
-              <span>Unreads</span>
-              <Switch className="shadow-none" />
-            </Label>
+    <div className="flex flex-col w-[28%] h-full justify-between">
+      <div className="flex w-full h-[6%]"> 
+        <header className="flex w-full shrink-0 items-center justify-between gap-2 rounded-lg  p-2" style={{ background: 'var(--color-gradient-blue)' }}>
+          <div className="flex items-center gap-2">
+            <SidebarTrigger className="-ml-1" />
           </div>
-          <SidebarInput placeholder="Type to search..." />
-        </SidebarHeader>
-        <SidebarContent>
-          <SidebarGroup className="px-0">
-            <SidebarGroupContent>
-              {mails.map((mail) => (
-                <a
-                  href="#"
-                  key={mail.email}
-                  className="flex flex-col items-start gap-2 whitespace-nowrap border-b p-4 text-sm leading-tight last:border-b-0 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
-                >
-                  <div className="flex w-full items-center gap-2">
-                    <span>{mail.name}</span>{" "}
-                    <span className="ml-auto text-xs">{mail.date}</span>
-                  </div>
-                  <span className="font-medium">{mail.subject}</span>
-                  <span className="line-clamp-2 w-[260px] whitespace-break-spaces text-xs">
-                    {mail.teaser}
-                  </span>
-                </a>
-              ))}
-            </SidebarGroupContent>
-          </SidebarGroup>
-        </SidebarContent>
-      </Sidebar>
-    </Sidebar>
+        </header> 
+      </div>
+      <div className={`flex h-[90.5%] justify-between ${className}`}>
+        {/* First sidebar - icons - directly using plain divs for more control */}
+        <div className="w-[20%] ml-[2%] flex-shrink-0 flex flex-col h-full rounded-lg" style={{ background: 'var(--color-gradient-blue)' }}>
+          <div className="flex items-center flex-1">
+            <SidebarGroup>
+              <SidebarGroupContent className="px-0">
+                <SidebarMenu>
+                  {data.navMain.slice(0, 2).map((item) => (
+                    <SidebarMenuItem key={item.title} className="flex flex-col items-center">
+                      <SidebarMenuButton
+                        tooltip={{
+                          children: item.title,
+                          hidden: true,
+                        }}
+                        onClick={() => {
+                          setActiveItem(item)
+                          const mail = data.mails.sort(() => Math.random() - 0.5)
+                          setMails(
+                            mail.slice(
+                              0,
+                              Math.max(5, Math.floor(Math.random() * 10) + 1)
+                            )
+                          )
+                          setOpen(true)
+                        }}
+                        isActive={activeItem?.title === item.title}
+                        className="nav-text-wrap flex flex-col items-center justify-center gap-0 px-2 py-2 h-auto w-full hover:bg-sidebar-accent/20 rounded-lg data-[active=true]:bg-white/30"
+                      >
+                        <div className="flex items-center justify-center w-12 h-12 rounded-lg">
+                          <item.icon className="sidebar-icon size-6 text-[#62748E]" />
+                        </div>
+                        <span className="sidebar-text text-xs text-center font-medium text-[#62748E]">{item.title}</span>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  ))}
+                  
+                  
+                  {data.navMain.slice(2, 5).map((item) => (
+                    <SidebarMenuItem key={item.title} className="flex flex-col items-center">
+                      <SidebarMenuButton
+                        tooltip={{
+                          children: item.title,
+                          hidden: true,
+                        }}
+                        onClick={() => {
+                          setActiveItem(item)
+                          const mail = data.mails.sort(() => Math.random() - 0.5)
+                          setMails(
+                            mail.slice(
+                              0,
+                              Math.max(5, Math.floor(Math.random() * 10) + 1)
+                            )
+                          )
+                          setOpen(true)
+                        }}
+                        isActive={activeItem?.title === item.title}
+                        className="nav-text-wrap flex flex-col items-center justify-center gap-0 p-2 h-auto w-full hover:bg-sidebar-accent/20 rounded-lg data-[active=true]:bg-white/30"
+                      >
+                        <div className="flex items-center justify-center w-12 h-12 rounded-lg">
+                          <item.icon className="sidebar-icon size-6 text-[#62748E]" />
+                        </div>
+                        <span className="sidebar-text text-xs text-center font-medium text-[#62748E]">{item.title}</span>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  ))}
+                  
+                  {data.navMain.slice(5).map((item) => (
+                    <SidebarMenuItem key={item.title} className="flex flex-col items-center">
+                      <SidebarMenuButton
+                        tooltip={{
+                          children: item.title,
+                          hidden: true,
+                        }}
+                        onClick={() => {
+                          setActiveItem(item)
+                          const mail = data.mails.sort(() => Math.random() - 0.5)
+                          setMails(
+                            mail.slice(
+                              0,
+                              Math.max(5, Math.floor(Math.random() * 10) + 1)
+                            )
+                          )
+                          setOpen(true)
+                        }}
+                        isActive={activeItem?.title === item.title}
+                        className="nav-text-wrap flex flex-col items-center justify-center gap-0 p-2 h-auto w-full hover:bg-sidebar-accent/20 rounded-lg data-[active=true]:bg-white/30"
+                      >
+                        <div className="flex items-center justify-center w-12 h-12 rounded-lg">
+                          <item.icon className="sidebar-icon size-6 text-[#62748E]" />
+                        </div>
+                        <span className="sidebar-text text-xs text-center font-medium text-[#62748E]">{item.title}</span>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  ))}
+                </SidebarMenu>
+              </SidebarGroupContent>
+            </SidebarGroup>
+          </div>
+          {/* <div className="p-2 flex justify-center w-full">
+            <NavUser user={data.user} />
+          </div> */}
+        </div>
+
+        {/* Second sidebar - email list - directly adjacent to the first sidebar */}
+        <div className={`w-[76%] h-full rounded-lg ${state === "collapsed" ? "hidden" : "block"}`} style={{ background: 'var(--color-gradient-blue)' }}>
+          <div className="w-full flex flex-col h-full">
+            <div className="flex flex-col gap-3.5 border-b p-4 w-full">
+              <div className="flex w-full items-center justify-between">
+                <div className="text-base font-medium text-foreground">
+                  {activeItem?.title}
+                </div>
+                <Label className="flex items-center gap-2 text-sm">
+                  <span>Unreads</span>
+                  <Switch className="shadow-none" />
+                </Label>
+              </div>
+              <SidebarInput placeholder="Type to search..." />
+            </div>
+            <div className="flex-1 overflow-auto [&::-webkit-scrollbar]:w-2.5 [&::-webkit-scrollbar]:h-2.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-border [&::-webkit-scrollbar-thumb]:border-[1px] [&::-webkit-scrollbar-thumb]:border-transparent [&::-webkit-scrollbar-thumb]:bg-clip-padding">
+              <div className="px-0">
+                <div>
+                  {mails.map((mail) => (
+                    <a
+                      href="#"
+                      key={mail.email}
+                      className="flex flex-col items-start gap-2 border-b p-4 text-sm leading-tight last:border-b-0 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+                    >
+                      <div className="flex w-full items-center gap-2">
+                        <span className="truncate">{mail.name}</span>{" "}
+                        <span className="ml-auto flex-shrink-0 text-xs">{mail.date}</span>
+                      </div>
+                      <span className="font-medium truncate w-full">{mail.subject}</span>
+                      <span className="line-clamp-2 w-full text-xs">
+                        {mail.teaser}
+                      </span>
+                    </a>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   )
 }
