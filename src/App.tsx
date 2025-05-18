@@ -6,7 +6,7 @@ const AppRouter = import.meta.env.VITE_USE_HASH_ROUTE === 'true' ? HashRouter : 
 
 export default function App() {
     return (
-        <ThemeProvider>
+        <ThemeProvider defaultTheme="light">
             <AppRouter>
                 <Router />
             </AppRouter>

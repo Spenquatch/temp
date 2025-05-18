@@ -38,9 +38,21 @@
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
   
+  /* Create a variable that represents 1vh in pixels */
+  --vh-in-px: calc(100vh / 100);
+  
+  /* Calculate grid spacing as 1.5 times the vh-in-px */
+  --grid-spacing: calc(var(--vh-in-px) * 1.5);
+  --body-height: calc(93% - var(--grid-spacing));
+  
+
+
+  
   /* Custom blue colors */
-  --color-blue-100: #F5F9FF;
-  --color-blue-300: #D6E6FF;
+  /* --color-blue-100: #F5F9FF;
+  --color-blue-300: #D6E6FF; */
+  --color-blue-100: rgba(173, 216, 230, 0.2); /* light blue with 40% opacity */
+  --color-blue-300: rgba(0, 123, 255, 0.2);   /* medium blue with 80% opacity */
   --color-gradient-blue: linear-gradient(65deg, var(--color-blue-300) -19.12%, var(--color-blue-100) 90.69%);
   --color-gradient-blue-reverse: linear-gradient(65deg, var(--color-blue-100) -19.12%, var(--color-blue-300) 90.69%);
   --color-gradient-blue-reverse-full: linear-gradient(245deg, var(--color-blue-300) -19.12%, var(--color-blue-100) 90.69%);
@@ -127,4 +139,12 @@
   body {
     @apply bg-background text-foreground;
   }
+}
+
+
+.gradient-dash-bg {
+    background: url("/images/Frame98.png");
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: top left;
 }

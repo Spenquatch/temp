@@ -10,10 +10,10 @@ export function AppLayout() {
                 } as React.CSSProperties
             }
         >
-            <div className="min-h-screen flex flex-col w-full">
-                <div className="flex-1 flex">
+            <div className="min-h-screen flex flex-col w-full gradient-dash-bg">
+
                     <Outlet />
-                </div>
+
             </div>
         </SidebarProvider>
     )
